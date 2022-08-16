@@ -1,5 +1,6 @@
 package com.udacity.jdnd.course3.critter.service;
 
+import com.udacity.jdnd.course3.critter.entity.DayAvailableEntity;
 import com.udacity.jdnd.course3.critter.entity.EmployeeEntity;
 import com.udacity.jdnd.course3.critter.entity.SkillEntity;
 import com.udacity.jdnd.course3.critter.repository.EmployeeRepository;
@@ -38,14 +39,11 @@ public class EmployeeService {
             Set<SkillEntity> skills = this.skillService.saveEmployeeSkill(employee, dto.getSkills());
             employee.setSkills(skills);
         }
-//        if (dto.getDaysAvailable() != null) {
-//            Set<DayOfWeekEntity> days = new HashSet<>();
-//            for (DayOfWeek day : dto.getDaysAvailable()) {
-//                DayOfWeekEntity dayOfWeekEntity = this.dayAvailableService.saveDayAvailable(day, employee);
-//                days.add(dayOfWeekEntity);
-//            }
-//            employee.setDaysAvailable(days);
-//        }
+
+        if (dto.getDaysAvailable() != null) {
+            Set<DayAvailableEntity> days = this.dayAvailableService.saveDaysAvailable(employee, dto.getDaysAvailable());
+            employee.setDaysAvailable(days);
+        }
 
         this.convertToDTO(employee, dto);
 
@@ -64,14 +62,10 @@ public class EmployeeService {
     public void setAvailability(Set<DayOfWeek> daysAvailable, Long employeeId) {
 
         EmployeeEntity employee = this.repository.findById(employeeId).orElseThrow(RuntimeException::new);
-//        if (daysAvailable != null) {
-//            Set<DayOfWeekEntity> days = new HashSet<>();
-//            for (DayOfWeek day : daysAvailable) {
-//                DayOfWeekEntity dayOfWeekEntity = this.dayAvailableService.saveDayAvailable(day, employee);
-//                days.add(dayOfWeekEntity);
-//            }
-//            employee.setDaysAvailable(days);
-//        }
+        if (daysAvailable != null) {
+            Set<DayAvailableEntity> days = this.dayAvailableService.saveDaysAvailable(employee, daysAvailable);
+            employee.setDaysAvailable(days);
+        }
     }
 
     public List<EmployeeDTO> findEmployeesForService(EmployeeRequestDTO employeeDTO) {
@@ -103,11 +97,11 @@ public class EmployeeService {
             Set<EmployeeSkill> employeeSkills = skills.stream().map(SkillEntity::getSkill).collect(Collectors.toSet());
             target.setSkills(employeeSkills);
         }
-//
-//        Set<DayOfWeekEntity> daysAvailable = source.getDaysAvailable();
-//        if (daysAvailable != null) {
-//            Set<DayOfWeek> dayOfWeeks = daysAvailable.stream().map(DayOfWeekEntity::getDayOfWeek).collect(Collectors.toSet());
-//            target.setDaysAvailable(dayOfWeeks);
-//        }
+
+        Set<DayAvailableEntity> daysAvailable = source.getDaysAvailable();
+        if (daysAvailable != null) {
+            Set<DayOfWeek> dayOfWeeks = daysAvailable.stream().map(DayAvailableEntity::getDayOfWeek).collect(Collectors.toSet());
+            target.setDaysAvailable(dayOfWeeks);
+        }
     }
 }

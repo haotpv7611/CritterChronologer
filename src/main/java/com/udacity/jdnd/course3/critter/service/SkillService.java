@@ -26,9 +26,11 @@ public class SkillService {
             for (EmployeeSkill skill : skills) {
                 employeeSkills.add(new SkillEntity(skill, employee));
             }
+
+            employeeSkills = new HashSet<>(this.repository.saveAll(employeeSkills));
         }
 
-        return new HashSet<>(this.repository.saveAll(employeeSkills));
+        return employeeSkills;
     }
 
     public Set<SkillEntity> findBySkillIn(Set<EmployeeSkill> skills) {
