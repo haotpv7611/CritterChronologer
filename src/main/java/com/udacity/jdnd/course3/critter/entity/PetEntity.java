@@ -28,7 +28,7 @@ public class PetEntity {
     private CustomerEntity owner;
 
     @OneToMany(mappedBy = "pet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ScheduleEntity> petSchedules;
+    private List<ScheduleDetailEntity> petSchedules;
 
     public Long getId() {
         return id;
@@ -78,11 +78,11 @@ public class PetEntity {
         this.owner = owner;
     }
 
-    public List<ScheduleEntity> getPetSchedules() {
+    public List<ScheduleDetailEntity> getPetSchedules() {
         return petSchedules;
     }
 
-    public void setPetSchedules(List<ScheduleEntity> petSchedules) {
+    public void setPetSchedules(List<ScheduleDetailEntity> petSchedules) {
         this.petSchedules = petSchedules;
     }
 }

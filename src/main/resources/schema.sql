@@ -25,13 +25,20 @@ CREATE TABLE IF NOT EXISTS EMPLOYEES (
 
 CREATE TABLE IF NOT EXISTS SCHEDULES (
   id BIGINT NOT NULL auto_increment,
-  employee_id BIGINT,
-  pet_id BIGINT,
   event_date DATE,
   activities VARCHAR(255),
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS SCHEDULE_DETAILS (
+  id BIGINT NOT NULL auto_increment,
+  employee_id BIGINT,
+  pet_id BIGINT,
+  schedule_id BIGINT,
   PRIMARY KEY(id),
   CONSTRAINT FK_EmployeeSchedule FOREIGN KEY (employee_id) REFERENCES EMPLOYEES(id),
-  CONSTRAINT FK_PetSchedule FOREIGN KEY (pet_id) REFERENCES PETS(id)
+  CONSTRAINT FK_PetSchedule FOREIGN KEY (pet_id) REFERENCES PETS(id),
+  CONSTRAINT FK_ScheduleDetail FOREIGN KEY (schedule_id) REFERENCES SCHEDULES(id)
 );
 
 CREATE TABLE IF NOT EXISTS SKILLS (

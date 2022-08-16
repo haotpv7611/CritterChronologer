@@ -21,7 +21,7 @@ public class EmployeeEntity {
     private Set<DayAvailableEntity> daysAvailable;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ScheduleEntity> employeeSchedules;
+    private List<ScheduleDetailEntity> employeeSchedules;
 
     public Long getId() {
         return id;
@@ -55,11 +55,11 @@ public class EmployeeEntity {
         this.daysAvailable = daysAvailable;
     }
 
-    public List<ScheduleEntity> getEmployeeSchedules() {
+    public List<ScheduleDetailEntity> getEmployeeSchedules() {
         return employeeSchedules;
     }
 
-    public void setEmployeeSchedules(List<ScheduleEntity> employeeSchedules) {
+    public void setEmployeeSchedules(List<ScheduleDetailEntity> employeeSchedules) {
         this.employeeSchedules = employeeSchedules;
     }
 }
