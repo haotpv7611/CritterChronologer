@@ -6,6 +6,7 @@ import com.udacity.jdnd.course3.critter.repository.SkillRepository;
 import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -18,11 +19,17 @@ public class SkillService {
         this.repository = repository;
     }
 
-//    public SkillEntity saveEmployeeSkill(EmployeeSkill skill, EmployeeEntity employee) {
-//        SkillEntity employeeSkill = new SkillEntity(skill, employee);
-//
-//        return this.repository.save(employeeSkill);
-//    }
+    public Set<SkillEntity> saveEmployeeSkill(EmployeeEntity employee, Set<EmployeeSkill> skills) {
+
+        Set<SkillEntity> employeeSkills = new HashSet<>();
+        if (!skills.isEmpty()) {
+            for (EmployeeSkill skill : skills) {
+                employeeSkills.add(new SkillEntity(skill, employee));
+            }
+        }
+
+        return new HashSet<>(this.repository.saveAll(employeeSkills));
+    }
 
     public Set<SkillEntity> findBySkillIn(Set<EmployeeSkill> skills) {
 

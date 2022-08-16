@@ -35,12 +35,8 @@ public class EmployeeService {
         employee = this.repository.save(employee);
 
         if (dto.getSkills() != null) {
-            Set<SkillEntity> skills = this.skillService.findBySkillIn(dto.getSkills());
-
-//            if (skills != null) {
-//                Set<EmployeeSkillEntity> employeeSkills = this.employeeSkillService.saveAll(employee, skills);
-//                employee.setSkills(employeeSkills);
-//            }
+            Set<SkillEntity> skills = this.skillService.saveEmployeeSkill(employee, dto.getSkills());
+            employee.setSkills(skills);
         }
 //        if (dto.getDaysAvailable() != null) {
 //            Set<DayOfWeekEntity> days = new HashSet<>();
@@ -102,11 +98,11 @@ public class EmployeeService {
 
     private void convertToDTO(EmployeeEntity source, EmployeeDTO target) {
         BeanUtils.copyProperties(source, target);
-//        Set<EmployeeSkillEntity> skills = source.getSkills();
-//        if (skills != null) {
-//            Set<EmployeeSkill> employeeSkills = skills.stream().map(EmployeeSkillEntity::getSkill).map(SkillEntity::getSkill).collect(Collectors.toSet());
-//            target.setSkills(employeeSkills);
-//        }
+        Set<SkillEntity> skills = source.getSkills();
+        if (skills != null) {
+            Set<EmployeeSkill> employeeSkills = skills.stream().map(SkillEntity::getSkill).collect(Collectors.toSet());
+            target.setSkills(employeeSkills);
+        }
 //
 //        Set<DayOfWeekEntity> daysAvailable = source.getDaysAvailable();
 //        if (daysAvailable != null) {
