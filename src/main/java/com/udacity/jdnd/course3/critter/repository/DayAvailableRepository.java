@@ -10,5 +10,5 @@ import java.util.Set;
 @Repository
 public interface DayAvailableRepository extends JpaRepository<DayAvailableEntity, Long> {
 
-    Set<DayAvailableEntity> findByDayOfWeekIn(Set<DayOfWeek> days);
+    Set<DayAvailableEntity> findByDayOfWeek(DayOfWeek day);
 }

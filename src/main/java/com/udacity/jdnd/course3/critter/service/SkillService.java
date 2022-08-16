@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class SkillService {
@@ -26,20 +27,25 @@ public class SkillService {
             for (EmployeeSkill skill : skills) {
                 employeeSkills.add(new SkillEntity(skill, employee));
             }
-
             employeeSkills = new HashSet<>(this.repository.saveAll(employeeSkills));
         }
 
         return employeeSkills;
     }
 
-    public Set<SkillEntity> findBySkillIn(Set<EmployeeSkill> skills) {
+    public Set<EmployeeEntity> findEmployeeBySkillIn(Set<EmployeeSkill> skills) {
 
-        return this.repository.findBySkillIn(skills);
+        Set<EmployeeEntity> employees = new HashSet<>();
+        for (EmployeeSkill skill : skills) {
+            Set<SkillEntity> employeeSkills = this.repository.findBySkill(skill);
+            if (employees.isEmpty()) {
+                employees.addAll(employeeSkills.stream().map(SkillEntity::getEmployee).collect(Collectors.toSet()));
+            } else {
+                Set<EmployeeEntity> newEmployees = employeeSkills.stream().map(SkillEntity::getEmployee).collect(Collectors.toSet());
+                employees = employees.stream().filter(newEmployees::contains).collect(Collectors.toSet());
+            }
+        }
+
+        return employees;
     }
-
-//    private void convertToDTO(SkillEntity source, SkillDTO target) {
-//        BeanUtils.copyProperties(source, target);
-//        target.setEmployeeId(source.getId());
-//    }
 }

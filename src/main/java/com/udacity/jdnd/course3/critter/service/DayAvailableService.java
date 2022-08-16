@@ -1,16 +1,15 @@
 package com.udacity.jdnd.course3.critter.service;
 
-import com.udacity.jdnd.course3.critter.dto.SkillDTO;
 import com.udacity.jdnd.course3.critter.entity.DayAvailableEntity;
 import com.udacity.jdnd.course3.critter.entity.EmployeeEntity;
-import com.udacity.jdnd.course3.critter.entity.SkillEntity;
 import com.udacity.jdnd.course3.critter.repository.DayAvailableRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DayAvailableService {
@@ -28,20 +27,17 @@ public class DayAvailableService {
             for (DayOfWeek day : daysAvailable) {
                 days.add(new DayAvailableEntity(employee, day));
             }
-
             days = new HashSet<>(this.repository.saveAll(days));
         }
 
         return days;
     }
 
-    public Set<DayAvailableEntity> findByDayOfWeekIn(Set<DayOfWeek> days) {
+    public Set<EmployeeEntity> findEmployeeByDayOfWeek(LocalDate date) {
 
-        return this.repository.findByDayOfWeekIn(days);
-    }
+        DayOfWeek day = date.getDayOfWeek();
+        Set<DayAvailableEntity> daysAvailable = this.repository.findByDayOfWeek(day);
 
-    private void convertToDTO(SkillEntity source, SkillDTO target) {
-        BeanUtils.copyProperties(source, target);
-        target.setEmployeeId(source.getId());
+        return daysAvailable.stream().map(DayAvailableEntity::getEmployee).collect(Collectors.toSet());
     }
 }

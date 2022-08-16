@@ -10,5 +10,5 @@ import java.util.Set;
 @Repository
 public interface SkillRepository extends JpaRepository<SkillEntity, Long> {
 
-    Set<SkillEntity> findBySkillIn(Set<EmployeeSkill> skills);
+    Set<SkillEntity> findBySkill(EmployeeSkill skill);
 }

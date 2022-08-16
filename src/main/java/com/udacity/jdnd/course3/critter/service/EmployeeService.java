@@ -11,7 +11,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,12 +41,10 @@ public class EmployeeService {
             Set<SkillEntity> skills = this.skillService.saveEmployeeSkill(employee, dto.getSkills());
             employee.setSkills(skills);
         }
-
         if (dto.getDaysAvailable() != null) {
             Set<DayAvailableEntity> days = this.dayAvailableService.saveDaysAvailable(employee, dto.getDaysAvailable());
             employee.setDaysAvailable(days);
         }
-
         this.convertToDTO(employee, dto);
 
         return dto;
@@ -69,28 +69,25 @@ public class EmployeeService {
     }
 
     public List<EmployeeDTO> findEmployeesForService(EmployeeRequestDTO employeeDTO) {
-//        Set<SkillEntity> skills = this.skillService.findBySkillIn(employeeDTO.getSkills());
-//        Set<EmployeeEntity> employeeSkills = skills.stream().map(SkillEntity::getEmployee).collect(Collectors.toSet());
-//
-//        Set<DayOfWeek> dayOfWeeks = new HashSet<>();
-//        dayOfWeeks.add(employeeDTO.getDate().getDayOfWeek());
-//        Set<DayOfWeekEntity> days = this.dayAvailableService.findByDayOfWeekIn(dayOfWeeks);
-//        Set<EmployeeEntity> employeeDays = days.stream().map(DayOfWeekEntity::getEmployee).collect(Collectors.toSet());
-//
-//        Set<EmployeeEntity> employees = employeeSkills.stream().filter(employeeDays::contains).collect(Collectors.toSet());
+
+        Set<EmployeeEntity> employeeSkills = this.skillService.findEmployeeBySkillIn(employeeDTO.getSkills());
+        Set<EmployeeEntity> employees = this.dayAvailableService.findEmployeeByDayOfWeek(employeeDTO.getDate());
+        employees = employeeSkills.stream().filter(employees::contains).collect(Collectors.toSet());
+
         List<EmployeeDTO> employeeDTOs = new ArrayList<>();
-//        if (!employees.isEmpty()) {
-//            for (EmployeeEntity employee : employees) {
-//                EmployeeDTO dto = new EmployeeDTO();
-//                this.convertToDTO(employee, dto);
-//                employeeDTOs.add(dto);
-//            }
-//        }
+        if (!employees.isEmpty()) {
+            for (EmployeeEntity employee : employees) {
+                EmployeeDTO dto = new EmployeeDTO();
+                this.convertToDTO(employee, dto);
+                employeeDTOs.add(dto);
+            }
+        }
 
         return employeeDTOs;
     }
 
     private void convertToDTO(EmployeeEntity source, EmployeeDTO target) {
+
         BeanUtils.copyProperties(source, target);
         Set<SkillEntity> skills = source.getSkills();
         if (skills != null) {
