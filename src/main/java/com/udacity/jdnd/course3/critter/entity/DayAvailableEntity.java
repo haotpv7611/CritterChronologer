@@ -8,6 +8,7 @@ import java.time.DayOfWeek;
 public class DayAvailableEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
