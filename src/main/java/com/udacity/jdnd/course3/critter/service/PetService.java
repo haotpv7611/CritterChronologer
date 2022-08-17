@@ -3,16 +3,13 @@ package com.udacity.jdnd.course3.critter.service;
 import com.udacity.jdnd.course3.critter.entity.CustomerEntity;
 import com.udacity.jdnd.course3.critter.entity.PetEntity;
 import com.udacity.jdnd.course3.critter.pet.PetDTO;
-import com.udacity.jdnd.course3.critter.pet.PetType;
 import com.udacity.jdnd.course3.critter.repository.CustomerRepository;
 import com.udacity.jdnd.course3.critter.repository.PetRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class PetService {
@@ -71,6 +68,11 @@ public class PetService {
         }
 
         return petDTOs;
+    }
+
+    public List<PetEntity> findAllPetsById(List<Long> ids) {
+
+        return this.petRepository.findAllById(ids);
     }
 
     private void convertToDTO(PetEntity source, PetDTO target) {

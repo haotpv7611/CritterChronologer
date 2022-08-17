@@ -86,6 +86,11 @@ public class EmployeeService {
         return employeeDTOs;
     }
 
+    public List<EmployeeEntity> findAllPetsById(List<Long> ids) {
+
+        return this.repository.findAllById(ids);
+    }
+
     private void convertToDTO(EmployeeEntity source, EmployeeDTO target) {
 
         BeanUtils.copyProperties(source, target);

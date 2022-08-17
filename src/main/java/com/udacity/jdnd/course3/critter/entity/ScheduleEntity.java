@@ -1,7 +1,8 @@
 package com.udacity.jdnd.course3.critter.entity;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -12,12 +13,18 @@ public class ScheduleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date eventDate;
+    private LocalDate eventDate;
 
-    private String activities;
+    private DayOfWeek dayOfWeek;
 
     @OneToMany(mappedBy = "schedule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ScheduleDetailEntity> scheduleDetails;
+    private List<ScheduleActivityEntity> activities;
+
+    @OneToMany(mappedBy = "schedule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PetScheduleEntity> petSchedules;
+
+    @OneToMany(mappedBy = "schedule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<EmployeeScheduleEntity> employeeSchedules;
 
     public Long getId() {
         return id;
@@ -27,27 +34,43 @@ public class ScheduleEntity {
         this.id = id;
     }
 
-    public Date getEventDate() {
+    public LocalDate getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(Date eventDate) {
+    public void setEventDate(LocalDate eventDate) {
         this.eventDate = eventDate;
     }
 
-    public String getActivities() {
+    public DayOfWeek getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(DayOfWeek dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
+
+    public List<ScheduleActivityEntity> getActivities() {
         return activities;
     }
 
-    public void setActivities(String activities) {
+    public void setActivities(List<ScheduleActivityEntity> activities) {
         this.activities = activities;
     }
 
-    public List<ScheduleDetailEntity> getScheduleDetails() {
-        return scheduleDetails;
+    public List<PetScheduleEntity> getPetSchedules() {
+        return petSchedules;
     }
 
-    public void setScheduleDetails(List<ScheduleDetailEntity> scheduleDetails) {
-        this.scheduleDetails = scheduleDetails;
+    public void setPetSchedules(List<PetScheduleEntity> petSchedules) {
+        this.petSchedules = petSchedules;
+    }
+
+    public List<EmployeeScheduleEntity> getEmployeeSchedules() {
+        return employeeSchedules;
+    }
+
+    public void setEmployeeSchedules(List<EmployeeScheduleEntity> employeeSchedules) {
+        this.employeeSchedules = employeeSchedules;
     }
 }
