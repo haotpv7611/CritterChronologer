@@ -18,6 +18,9 @@ public class EmployeeScheduleEntity {
     @JoinColumn(name = "schedule_id")
     private ScheduleEntity schedule;
 
+    public EmployeeScheduleEntity() {
+    }
+
     public EmployeeScheduleEntity(EmployeeEntity employee, ScheduleEntity schedule) {
         this.employee = employee;
         this.schedule = schedule;

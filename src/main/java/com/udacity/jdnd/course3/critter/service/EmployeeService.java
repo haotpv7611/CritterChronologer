@@ -37,11 +37,11 @@ public class EmployeeService {
         employee.setName(dto.getName());
         employee = this.repository.save(employee);
 
-        if (dto.getSkills() != null) {
+        if (dto.getSkills() != null && !dto.getSkills().isEmpty()) {
             Set<SkillEntity> skills = this.skillService.saveEmployeeSkill(employee, dto.getSkills());
             employee.setSkills(skills);
         }
-        if (dto.getDaysAvailable() != null) {
+        if (dto.getDaysAvailable() != null && !dto.getDaysAvailable().isEmpty()) {
             Set<DayAvailableEntity> days = this.dayAvailableService.saveDaysAvailable(employee, dto.getDaysAvailable());
             employee.setDaysAvailable(days);
         }
@@ -52,7 +52,8 @@ public class EmployeeService {
 
     public EmployeeDTO getEmployeeById(Long id) {
 
-        EmployeeEntity employee = this.repository.findById(id).orElseThrow(RuntimeException::new);
+        EmployeeEntity employee = this.repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
         EmployeeDTO dto = new EmployeeDTO();
         this.convertToDTO(employee, dto);
 
@@ -61,8 +62,9 @@ public class EmployeeService {
 
     public void setAvailability(Set<DayOfWeek> daysAvailable, Long employeeId) {
 
-        EmployeeEntity employee = this.repository.findById(employeeId).orElseThrow(RuntimeException::new);
-        if (daysAvailable != null) {
+        EmployeeEntity employee = this.repository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        if (daysAvailable != null && !daysAvailable.isEmpty()) {
             Set<DayAvailableEntity> days = this.dayAvailableService.saveDaysAvailable(employee, daysAvailable);
             employee.setDaysAvailable(days);
         }
@@ -72,7 +74,11 @@ public class EmployeeService {
 
         Set<EmployeeEntity> employeeSkills = this.skillService.findEmployeeBySkillIn(employeeDTO.getSkills());
         Set<EmployeeEntity> employees = this.dayAvailableService.findEmployeeByDayOfWeek(employeeDTO.getDate());
-        employees = employeeSkills.stream().filter(employees::contains).collect(Collectors.toSet());
+        if (!employeeSkills.isEmpty() && !employees.isEmpty()) {
+            employees = employeeSkills.stream()
+                    .filter(employees::contains)
+                    .collect(Collectors.toSet());
+        }
 
         List<EmployeeDTO> employeeDTOs = new ArrayList<>();
         if (!employees.isEmpty()) {
@@ -86,7 +92,7 @@ public class EmployeeService {
         return employeeDTOs;
     }
 
-    public List<EmployeeEntity> findAllPetsById(List<Long> ids) {
+    public List<EmployeeEntity> findAllEmployeesByIds(List<Long> ids) {
 
         return this.repository.findAllById(ids);
     }
@@ -96,13 +102,17 @@ public class EmployeeService {
         BeanUtils.copyProperties(source, target);
         Set<SkillEntity> skills = source.getSkills();
         if (skills != null) {
-            Set<EmployeeSkill> employeeSkills = skills.stream().map(SkillEntity::getSkill).collect(Collectors.toSet());
+            Set<EmployeeSkill> employeeSkills = skills.stream()
+                    .map(SkillEntity::getSkill)
+                    .collect(Collectors.toSet());
             target.setSkills(employeeSkills);
         }
 
         Set<DayAvailableEntity> daysAvailable = source.getDaysAvailable();
         if (daysAvailable != null) {
-            Set<DayOfWeek> dayOfWeeks = daysAvailable.stream().map(DayAvailableEntity::getDayOfWeek).collect(Collectors.toSet());
+            Set<DayOfWeek> dayOfWeeks = daysAvailable.stream()
+                    .map(DayAvailableEntity::getDayOfWeek)
+                    .collect(Collectors.toSet());
             target.setDaysAvailable(dayOfWeeks);
         }
     }

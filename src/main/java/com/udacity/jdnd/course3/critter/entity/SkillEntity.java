@@ -19,6 +19,9 @@ public class SkillEntity {
     @JoinColumn(name = "employee_id")
     private EmployeeEntity employee;
 
+    public SkillEntity() {
+    }
+
     public SkillEntity(EmployeeSkill skill, EmployeeEntity employee) {
         this.skill = skill;
         this.employee = employee;

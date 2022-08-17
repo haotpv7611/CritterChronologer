@@ -2,8 +2,8 @@ package com.udacity.jdnd.course3.critter.service;
 
 import com.udacity.jdnd.course3.critter.entity.CustomerEntity;
 import com.udacity.jdnd.course3.critter.entity.PetEntity;
-import com.udacity.jdnd.course3.critter.pet.PetDTO;
 import com.udacity.jdnd.course3.critter.repository.CustomerRepository;
+import com.udacity.jdnd.course3.critter.repository.PetRepository;
 import com.udacity.jdnd.course3.critter.user.CustomerDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository repository;
-    private final PetService petService;
+    private final PetRepository petRepository;
 
     public CustomerService(CustomerRepository repository,
-                           PetService petService) {
+                           PetRepository petRepository) {
         this.repository = repository;
-        this.petService = petService;
+        this.petRepository = petRepository;
     }
 
     public CustomerDTO saveCustomer(CustomerDTO dto) {
@@ -36,12 +36,14 @@ public class CustomerService {
 
     public List<CustomerDTO> getAllCustomer() {
 
-        List<CustomerEntity> customers = this.repository.findAll();
         List<CustomerDTO> customerDTOs = new ArrayList<>();
-        for (CustomerEntity customer : customers) {
-            CustomerDTO dto = new CustomerDTO();
-            this.convertToDTO(customer, dto);
-            customerDTOs.add(dto);
+        List<CustomerEntity> customers = this.repository.findAll();
+        if (!customers.isEmpty()) {
+            for (CustomerEntity customer : customers) {
+                CustomerDTO dto = new CustomerDTO();
+                this.convertToDTO(customer, dto);
+                customerDTOs.add(dto);
+            }
         }
 
         return customerDTOs;
@@ -49,8 +51,10 @@ public class CustomerService {
 
     public CustomerDTO findOwnerByPetId(Long petId) {
 
-        PetDTO pet = this.petService.getPetById(petId);
-        CustomerEntity customer = this.repository.findById(pet.getOwnerId()).orElseThrow(RuntimeException::new);
+        PetEntity pet = this.petRepository.findById(petId)
+                .orElseThrow(() -> new RuntimeException("Pet not found"));
+        CustomerEntity customer = this.repository.findById(pet.getOwner().getId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
         CustomerDTO dto = new CustomerDTO();
         this.convertToDTO(customer, dto);
 
@@ -62,7 +66,9 @@ public class CustomerService {
         BeanUtils.copyProperties(source, target);
         List<PetEntity> pets = source.getPets();
         if (pets != null) {
-            List<Long> ids = pets.stream().map(PetEntity::getId).collect(Collectors.toList());
+            List<Long> ids = pets.stream()
+                    .map(PetEntity::getId)
+                    .collect(Collectors.toList());
             target.setPetIds(ids);
         }
     }

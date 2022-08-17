@@ -22,15 +22,27 @@ public class EmployeeScheduleService {
     public List<EmployeeScheduleEntity> saveAllEmployeeSchedules(ScheduleEntity schedule, List<Long> employeeIds) {
 
         List<EmployeeScheduleEntity> employeeSchedules = new ArrayList<>();
-        List<EmployeeEntity> employees = this.employeeService.findAllPetsById(employeeIds);
+        List<EmployeeEntity> employees = this.employeeService.findAllEmployeesByIds(employeeIds);
         if (!employees.isEmpty()) {
             for (EmployeeEntity employee : employees) {
-                EmployeeScheduleEntity employeeSchedule = new EmployeeScheduleEntity(employee, schedule);
-                employeeSchedules.add(employeeSchedule);
+                employeeSchedules.add(new EmployeeScheduleEntity(employee, schedule));
             }
             employeeSchedules = this.repository.saveAll(employeeSchedules);
         }
 
         return employeeSchedules;
+    }
+
+    public List<ScheduleEntity> findScheduleByEmployee(EmployeeEntity employee) {
+
+        List<ScheduleEntity> schedules = new ArrayList<>();
+        List<EmployeeScheduleEntity> employeeSchedules = this.repository.findByEmployee(employee);
+        if (!employeeSchedules.isEmpty()) {
+            for (EmployeeScheduleEntity employeeSchedule : employeeSchedules) {
+                schedules.add(employeeSchedule.getSchedule());
+            }
+        }
+
+        return schedules;
     }
 }

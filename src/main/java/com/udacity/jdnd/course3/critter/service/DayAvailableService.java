@@ -23,7 +23,7 @@ public class DayAvailableService {
     public Set<DayAvailableEntity> saveDaysAvailable(EmployeeEntity employee, Set<DayOfWeek> daysAvailable) {
 
         Set<DayAvailableEntity> days = new HashSet<>();
-        if (!daysAvailable.isEmpty()) {
+        if (daysAvailable != null && !daysAvailable.isEmpty()) {
             for (DayOfWeek day : daysAvailable) {
                 days.add(new DayAvailableEntity(employee, day));
             }

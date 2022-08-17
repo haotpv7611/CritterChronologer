@@ -18,6 +18,9 @@ public class PetScheduleEntity {
     @JoinColumn(name = "schedule_id")
     private ScheduleEntity schedule;
 
+    public PetScheduleEntity() {
+    }
+
     public PetScheduleEntity(PetEntity pet, ScheduleEntity schedule) {
         this.pet = pet;
         this.schedule = schedule;

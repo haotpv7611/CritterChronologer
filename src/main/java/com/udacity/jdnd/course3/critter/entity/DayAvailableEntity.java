@@ -18,6 +18,9 @@ public class DayAvailableEntity {
     @JoinColumn(name = "employee_id")
     private EmployeeEntity employee;
 
+    public DayAvailableEntity() {
+    }
+
     public DayAvailableEntity(EmployeeEntity employee, DayOfWeek dayOfWeek) {
         this.employee = employee;
         this.dayOfWeek = dayOfWeek;

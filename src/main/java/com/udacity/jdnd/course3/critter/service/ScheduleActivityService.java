@@ -23,8 +23,7 @@ public class ScheduleActivityService {
         List<ScheduleActivityEntity> scheduleActivities = new ArrayList<>();
         if (activities != null && !activities.isEmpty()) {
             for (EmployeeSkill skill : activities) {
-                ScheduleActivityEntity activity = new ScheduleActivityEntity(skill, schedule);
-                scheduleActivities.add(activity);
+                scheduleActivities.add(new ScheduleActivityEntity(skill, schedule));
             }
             scheduleActivities = this.repository.saveAll(scheduleActivities);
         }

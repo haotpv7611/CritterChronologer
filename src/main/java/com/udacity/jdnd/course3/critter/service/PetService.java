@@ -28,7 +28,8 @@ public class PetService {
         PetEntity pet = new PetEntity();
         BeanUtils.copyProperties(dto, pet);
 
-        CustomerEntity owner = this.customerRepository.findById(dto.getOwnerId()).orElseThrow(RuntimeException::new);
+        CustomerEntity owner = this.customerRepository.findById(dto.getOwnerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
         pet.setOwner(owner);
         pet.setType(dto.getType());
 
@@ -47,19 +48,34 @@ public class PetService {
 
     public PetDTO getPetById(Long id) {
 
-        PetEntity pet = this.petRepository.findById(id).orElseThrow(RuntimeException::new);
+        PetEntity pet = this.petRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pet not found"));
         PetDTO dto = new PetDTO();
         this.convertToDTO(pet, dto);
 
         return dto;
     }
 
+    public List<PetDTO> getAllPets() {
+
+        List<PetDTO> petDTOs = new ArrayList<>();
+        List<PetEntity> pets = this.petRepository.findAll();
+        if (!pets.isEmpty()) {
+            for (PetEntity pet : pets) {
+                PetDTO dto = new PetDTO();
+                this.convertToDTO(pet, dto);
+                petDTOs.add(dto);
+            }
+        }
+
+        return petDTOs;
+    }
+
     public List<PetDTO> getAllPetsByOwner(Long ownerId) {
 
-        List<PetEntity> pets = this.petRepository.findByOwnerId(ownerId);
         List<PetDTO> petDTOs = new ArrayList<>();
-
-        if (pets != null) {
+        List<PetEntity> pets = this.petRepository.findByOwnerId(ownerId);
+        if (!pets.isEmpty()) {
             for (PetEntity pet : pets) {
                 PetDTO dto = new PetDTO();
                 this.convertToDTO(pet, dto);

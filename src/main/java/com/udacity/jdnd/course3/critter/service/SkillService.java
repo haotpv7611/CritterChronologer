@@ -23,7 +23,7 @@ public class SkillService {
     public Set<SkillEntity> saveEmployeeSkill(EmployeeEntity employee, Set<EmployeeSkill> skills) {
 
         Set<SkillEntity> employeeSkills = new HashSet<>();
-        if (!skills.isEmpty()) {
+        if (skills != null && !skills.isEmpty()) {
             for (EmployeeSkill skill : skills) {
                 employeeSkills.add(new SkillEntity(skill, employee));
             }
@@ -36,13 +36,21 @@ public class SkillService {
     public Set<EmployeeEntity> findEmployeeBySkillIn(Set<EmployeeSkill> skills) {
 
         Set<EmployeeEntity> employees = new HashSet<>();
-        for (EmployeeSkill skill : skills) {
-            Set<SkillEntity> employeeSkills = this.repository.findBySkill(skill);
-            if (employees.isEmpty()) {
-                employees.addAll(employeeSkills.stream().map(SkillEntity::getEmployee).collect(Collectors.toSet()));
-            } else {
-                Set<EmployeeEntity> newEmployees = employeeSkills.stream().map(SkillEntity::getEmployee).collect(Collectors.toSet());
-                employees = employees.stream().filter(newEmployees::contains).collect(Collectors.toSet());
+        if (skills != null  && !skills.isEmpty()){
+            for (EmployeeSkill skill : skills) {
+                Set<SkillEntity> employeeSkills = this.repository.findBySkill(skill);
+                if (employees.isEmpty()) {
+                    employees.addAll(employeeSkills.stream()
+                            .map(SkillEntity::getEmployee)
+                            .collect(Collectors.toSet()));
+                } else {
+                    Set<EmployeeEntity> newEmployees = employeeSkills.stream()
+                            .map(SkillEntity::getEmployee)
+                            .collect(Collectors.toSet());
+                    employees = employees.stream()
+                            .filter(newEmployees::contains)
+                            .collect(Collectors.toSet());
+                }
             }
         }
 
