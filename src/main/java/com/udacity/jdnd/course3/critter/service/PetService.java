@@ -7,11 +7,13 @@ import com.udacity.jdnd.course3.critter.repository.CustomerRepository;
 import com.udacity.jdnd.course3.critter.repository.PetRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class PetService {
 
     private final PetRepository petRepository;
@@ -23,7 +25,7 @@ public class PetService {
         this.customerRepository = customerRepository;
     }
 
-    public PetDTO savePet(PetDTO dto) {
+    public PetEntity savePet(PetDTO dto) {
 
         PetEntity pet = new PetEntity();
         BeanUtils.copyProperties(dto, pet);
@@ -32,67 +34,36 @@ public class PetService {
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
         pet.setOwner(owner);
         pet.setType(dto.getType());
-
         pet = this.petRepository.save(pet);
+
         List<PetEntity> pets = owner.getPets();
         if (pets == null) {
             pets = new ArrayList<>();
         }
         pets.add(pet);
-
         owner.setPets(pets);
-        this.convertToDTO(pet, dto);
 
-        return dto;
+        return pet;
     }
 
-    public PetDTO getPetById(Long id) {
+    public PetEntity getPetById(Long id) {
 
-        PetEntity pet = this.petRepository.findById(id)
+        return this.petRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pet not found"));
-        PetDTO dto = new PetDTO();
-        this.convertToDTO(pet, dto);
-
-        return dto;
     }
 
-    public List<PetDTO> getAllPets() {
+    public List<PetEntity> getAllPets() {
 
-        List<PetDTO> petDTOs = new ArrayList<>();
-        List<PetEntity> pets = this.petRepository.findAll();
-        if (!pets.isEmpty()) {
-            for (PetEntity pet : pets) {
-                PetDTO dto = new PetDTO();
-                this.convertToDTO(pet, dto);
-                petDTOs.add(dto);
-            }
-        }
-
-        return petDTOs;
+        return this.petRepository.findAll();
     }
 
-    public List<PetDTO> getAllPetsByOwner(Long ownerId) {
+    public List<PetEntity> getAllPetsByOwner(Long ownerId) {
 
-        List<PetDTO> petDTOs = new ArrayList<>();
-        List<PetEntity> pets = this.petRepository.findByOwnerId(ownerId);
-        if (!pets.isEmpty()) {
-            for (PetEntity pet : pets) {
-                PetDTO dto = new PetDTO();
-                this.convertToDTO(pet, dto);
-                petDTOs.add(dto);
-            }
-        }
-
-        return petDTOs;
+        return this.petRepository.findByOwnerId(ownerId);
     }
 
     public List<PetEntity> findAllPetsById(List<Long> ids) {
 
         return this.petRepository.findAllById(ids);
-    }
-
-    private void convertToDTO(PetEntity source, PetDTO target) {
-        BeanUtils.copyProperties(source, target);
-        target.setOwnerId(source.getOwner().getId());
     }
 }

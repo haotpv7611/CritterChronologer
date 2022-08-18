@@ -5,12 +5,14 @@ import com.udacity.jdnd.course3.critter.entity.ScheduleEntity;
 import com.udacity.jdnd.course3.critter.repository.ScheduleActivityRepository;
 import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Service
+@Transactional
 public class ScheduleActivityService {
 
     private final ScheduleActivityRepository repository;

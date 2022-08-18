@@ -5,12 +5,14 @@ import com.udacity.jdnd.course3.critter.entity.SkillEntity;
 import com.udacity.jdnd.course3.critter.repository.SkillRepository;
 import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class SkillService {
 
     private final SkillRepository repository;

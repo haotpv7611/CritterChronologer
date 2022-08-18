@@ -4,6 +4,7 @@ import com.udacity.jdnd.course3.critter.entity.DayAvailableEntity;
 import com.udacity.jdnd.course3.critter.entity.EmployeeEntity;
 import com.udacity.jdnd.course3.critter.repository.DayAvailableRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class DayAvailableService {
 
     private final DayAvailableRepository repository;

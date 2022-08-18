@@ -1,8 +1,11 @@
 package com.udacity.jdnd.course3.critter.pet;
 
+import com.udacity.jdnd.course3.critter.entity.PetEntity;
 import com.udacity.jdnd.course3.critter.service.PetService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,24 +24,56 @@ public class PetController {
     @PostMapping
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
 
-        return this.petService.savePet(petDTO);
+        PetEntity pet = this.petService.savePet(petDTO);
+        this.convertToDTO(pet, petDTO);
+
+        return petDTO;
     }
 
     @GetMapping("/{petId}")
     public PetDTO getPet(@PathVariable long petId) {
 
-        return this.petService.getPetById(petId);
+        PetEntity pet = this.petService.getPetById(petId);
+        PetDTO petDTO = new PetDTO();
+        this.convertToDTO(pet, petDTO);
+
+        return petDTO;
     }
 
     @GetMapping
     public List<PetDTO> getPets(){
 
-        return this.petService.getAllPets();
+        List<PetDTO> petDTOs = new ArrayList<>();
+        List<PetEntity> pets = this.petService.getAllPets();
+        if (!pets.isEmpty()) {
+            for (PetEntity pet : pets) {
+                PetDTO dto = new PetDTO();
+                this.convertToDTO(pet, dto);
+                petDTOs.add(dto);
+            }
+        }
+
+        return petDTOs;
     }
 
     @GetMapping("/owner/{ownerId}")
     public List<PetDTO> getPetsByOwner(@PathVariable long ownerId) {
 
-        return this.petService.getAllPetsByOwner(ownerId);
+        List<PetDTO> petDTOs = new ArrayList<>();
+        List<PetEntity> pets = this.petService.getAllPetsByOwner(ownerId);
+        if (!pets.isEmpty()) {
+            for (PetEntity pet : pets) {
+                PetDTO dto = new PetDTO();
+                this.convertToDTO(pet, dto);
+                petDTOs.add(dto);
+            }
+        }
+
+        return petDTOs;
+    }
+
+    private void convertToDTO(PetEntity source, PetDTO target) {
+        BeanUtils.copyProperties(source, target);
+        target.setOwnerId(source.getOwner().getId());
     }
 }

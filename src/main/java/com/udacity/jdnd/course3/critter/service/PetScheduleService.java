@@ -3,11 +3,13 @@ package com.udacity.jdnd.course3.critter.service;
 import com.udacity.jdnd.course3.critter.entity.*;
 import com.udacity.jdnd.course3.critter.repository.PetScheduleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class PetScheduleService {
 
     private final PetScheduleRepository repository;

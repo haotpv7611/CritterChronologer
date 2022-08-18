@@ -7,12 +7,12 @@ import com.udacity.jdnd.course3.critter.repository.PetRepository;
 import com.udacity.jdnd.course3.critter.user.CustomerDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CustomerService {
 
     private final CustomerRepository repository;
@@ -24,52 +24,24 @@ public class CustomerService {
         this.petRepository = petRepository;
     }
 
-    public CustomerDTO saveCustomer(CustomerDTO dto) {
+    public CustomerEntity saveCustomer(CustomerDTO dto) {
 
         CustomerEntity customer = new CustomerEntity();
         BeanUtils.copyProperties(dto, customer);
-        customer = this.repository.save(customer);
-        this.convertToDTO(customer, dto);
 
-        return dto;
+        return this.repository.save(customer);
     }
 
-    public List<CustomerDTO> getAllCustomer() {
+    public List<CustomerEntity> getAllCustomer() {
 
-        List<CustomerDTO> customerDTOs = new ArrayList<>();
-        List<CustomerEntity> customers = this.repository.findAll();
-        if (!customers.isEmpty()) {
-            for (CustomerEntity customer : customers) {
-                CustomerDTO dto = new CustomerDTO();
-                this.convertToDTO(customer, dto);
-                customerDTOs.add(dto);
-            }
-        }
-
-        return customerDTOs;
+        return this.repository.findAll();
     }
 
-    public CustomerDTO findOwnerByPetId(Long petId) {
+    public CustomerEntity findOwnerByPetId(Long petId) {
 
         PetEntity pet = this.petRepository.findById(petId)
                 .orElseThrow(() -> new RuntimeException("Pet not found"));
-        CustomerEntity customer = this.repository.findById(pet.getOwner().getId())
+        return this.repository.findById(pet.getOwner().getId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
-        CustomerDTO dto = new CustomerDTO();
-        this.convertToDTO(customer, dto);
-
-        return dto;
-    }
-
-    private void convertToDTO(CustomerEntity source, CustomerDTO target) {
-
-        BeanUtils.copyProperties(source, target);
-        List<PetEntity> pets = source.getPets();
-        if (pets != null) {
-            List<Long> ids = pets.stream()
-                    .map(PetEntity::getId)
-                    .collect(Collectors.toList());
-            target.setPetIds(ids);
-        }
     }
 }
